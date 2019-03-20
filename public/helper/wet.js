@@ -4,11 +4,9 @@ window.onload = function() {
     appName: [
       {
         href: "#",
-        text: "Application Dashboard"
+        text: "Algorithmic Impact Assessment Demo"
       }
     ],
-    cdnEnv: "AKAMAI",
-    subTheme: "gcweb",
     search: false,
     lngLinks: [
       {
@@ -23,7 +21,6 @@ window.onload = function() {
 
   var defPreFooter = document.getElementById("def-preFooter");
   defPreFooter.outerHTML = wet.builder.preFooter({
-    cdnEnv: "AKAMAI",
     dateModified: "2018-02-15",
     versionIdentifier: "0.0.1",
     showPostContent: false
@@ -31,7 +28,5 @@ window.onload = function() {
 
   var defFooter = document.getElementById("def-footer");
   defFooter.outerHTML = wet.builder.appFooter({
-    cdnEnv: "AKAMAI",
-    subTheme: "gcweb"
   });
 };

@@ -1,4 +1,4 @@
-import { SurveyModel } from 'survey-vue';
+import { SurveyModel } from "survey-vue";
 
 export interface RootState {
   score: number;

@@ -10,7 +10,9 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
+    "@types/showdown": "^1.9.2",
     "register-service-worker": "^1.6.2",
+    "showdown": "^1.9.0",
     "survey-vue": "^1.0.75",
     "vue": "^2.6.6",
     "vue-class-component": "^6.0.0",

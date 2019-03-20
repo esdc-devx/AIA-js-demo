@@ -1,62 +1,23 @@
 <template>
   <div class="home">
+    <h1>Algorithmic Impact Assessment</h1>
     <Score />
-    <HelloWorld :survey="Survey" />
+    <AssessmentTool :survey="Survey" />
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { Model } from "survey-vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import AssessmentTool from "@/components/AssessmentTool.vue"; // @ is an alias to /src
 import Score from "@/components/Score.vue";
-import {RootState} from "../types";
-
-const surveyJSON = {
-  title: "Artificial Intelligence Algorithmic Assessment",
-  pages: [
-    {
-      name: "page1",
-      questions: [
-        {
-          type: "radiogroup",
-          name: "discretion",
-          choices: [
-            { text: "Yes (4 pts)", value: 4 },
-            { text: "No (0 Pts)", value: 0 }
-          ],
-          isRequired: true,
-          title:
-            "Does the recommendation or decision made by the system include elements of discretion?"
-        },
-        {
-          name: "discretion-desc",
-          type: "text",
-          requiredIf: "{discretion} contains 'Yes'",
-          enabledIf: "{discretion} contains 'Yes'",
-          title: "Describe what is discretionary about the decision"
-        },
-        {
-          type: "dropdown",
-          name: "reversible",
-          title: "Are the impacts resulting from the decision reversible?",
-          isRequired: true,
-          colCount: 0,
-          choices: [
-            { text: "Reversible (1 pt)", value: 1 },
-            { text: "Likely Reversible (2 pt)", value: 2 },
-            { text: "Difficult to Reverse (3 pt)", value: 3 },
-            { text: "Irreversible (4 pt)", value: 4 }
-          ]
-        }
-      ]
-    }
-  ]
-};
+import { RootState } from "../types";
+import surveyJSON from "../survey.json";
+import showdown from "showdown";
 
 @Component({
   components: {
-    HelloWorld,
+    AssessmentTool,
     Score
   }
 })
@@ -65,10 +26,24 @@ export default class Home extends Vue {
   created() {
     this.Survey.onComplete.add(result => {
       this.$store.commit("updateResult", result);
-      console.log(JSON.stringify(result.data));
     });
+
+    this.Survey.onComplete.add(result => {
+      this.$router.push("Results");
+    });
+
     this.Survey.onValueChanged.add(result => {
       this.$store.commit("updateResult", result);
+    });
+    const converter = new showdown.Converter();
+    this.Survey.onTextMarkdown.add(function(survey, options) {
+      //convert the mardown text to html
+      var str = converter.makeHtml(options.text);
+      //remove root paragraphs <p></p>
+      str = str.substring(3);
+      str = str.substring(0, str.length - 4);
+      //set html
+      options.html = str;
     });
   }
 }
