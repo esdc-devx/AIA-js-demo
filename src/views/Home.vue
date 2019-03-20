@@ -1,7 +1,7 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png">
-    <HelloWorld :survey="Survey"/>
+    <img alt="Vue logo" src="../assets/logo.png" />
+    <HelloWorld :survey="Survey" />
   </div>
 </template>
 
@@ -10,69 +10,59 @@ import { Component, Vue } from "vue-property-decorator";
 import { Model } from "survey-vue";
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
 
+const surveyJSON = {
+  title: "Artificial Intelligence Algorithmic Assessment",
+  pages: [
+    {
+      name: "page1",
+      questions: [
+        {
+          type: "radiogroup",
+          choices: [
+            { text: "Yes (4 pts)", value: 4 },
+            { text: "No (0 Pts)", value: 0 }
+          ],
+          isRequired: true,
+          name: "discretion",
+          title:
+            "Does the recommendation or decision made by the system include elements of discretion?"
+        },
+        {
+          name: "name",
+          type: "text",
+          requiredIf: "{discretion} contains 'Yes'",
+          enabledIf: "{discretion} contains 'Yes'",
+          title: "Describe what is discretionary about the decision"
+        },
+        {
+          type: "dropdown",
+          name: "car",
+          title: "Are the impacts resulting from the decision reversible?",
+          isRequired: true,
+          colCount: 0,
+          choices: [
+            { text: "Reversible (1 pt)", value: 1 },
+            { text: "Likely Reversible (2 pt)", value: 2 },
+            { text: "Difficult to Reverse (3 pt)", value: 3 },
+            { text: "Irreversible (4 pt)", value: 4 }
+          ]
+        }
+      ]
+    }
+  ]
+};
+
 @Component({
   components: {
     HelloWorld
   }
 })
 export default class Home extends Vue {
-  Survey = new Model({
-    title: "Tell us, what technologies do you use?",
-    pages: [
-      {
-        name: "page1",
-        questions: [
-          {
-            type: "radiogroup",
-            choices: ["Yes", "No"],
-            isRequired: true,
-            name: "frameworkUsing",
-            title: "Do you use any front-end framework like Bootstrap?"
-          },
-          {
-            type: "checkbox",
-            choices: ["Bootstrap", "Foundation"],
-            hasOther: true,
-            isRequired: true,
-            name: "framework",
-            title: "What front-end framework do you use?",
-            visibleIf: "{frameworkUsing} = 'Yes'"
-          }
-        ]
-      },
-      {
-        name: "page2",
-        questions: [
-          {
-            type: "radiogroup",
-            choices: ["Yes", "No"],
-            isRequired: true,
-            name: "mvvmUsing",
-            title: "Do you use any MVVM framework?"
-          },
-          {
-            type: "checkbox",
-            choices: ["AngularJS", "KnockoutJS", "React"],
-            hasOther: true,
-            isRequired: true,
-            name: "mvvm",
-            title: "What MVVM framework do you use?",
-            visibleIf: "{mvvmUsing} = 'Yes'"
-          }
-        ]
-      },
-      {
-        name: "page3",
-        questions: [
-          {
-            type: "comment",
-            name: "about",
-            title:
-              "Please tell us about your main requirements for Survey library"
-          }
-        ]
-      }
-    ]
-  });
+  readonly Survey: Model = new Model(surveyJSON);
+  created() {
+    this.Survey.onComplete.add(result => {
+      console.log(JSON.stringify(result.data));
+    });
+  }
 }
 </script>
