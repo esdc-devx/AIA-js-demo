@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
+    <Score />
     <HelloWorld :survey="Survey" />
   </div>
 </template>
@@ -9,6 +9,8 @@
 import { Component, Vue } from "vue-property-decorator";
 import { Model } from "survey-vue";
 import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import Score from "@/components/Score.vue";
+import {RootState} from "../types";
 
 const surveyJSON = {
   title: "Artificial Intelligence Algorithmic Assessment",
@@ -18,17 +20,17 @@ const surveyJSON = {
       questions: [
         {
           type: "radiogroup",
+          name: "discretion",
           choices: [
             { text: "Yes (4 pts)", value: 4 },
             { text: "No (0 Pts)", value: 0 }
           ],
           isRequired: true,
-          name: "discretion",
           title:
             "Does the recommendation or decision made by the system include elements of discretion?"
         },
         {
-          name: "name",
+          name: "discretion-desc",
           type: "text",
           requiredIf: "{discretion} contains 'Yes'",
           enabledIf: "{discretion} contains 'Yes'",
@@ -36,7 +38,7 @@ const surveyJSON = {
         },
         {
           type: "dropdown",
-          name: "car",
+          name: "reversible",
           title: "Are the impacts resulting from the decision reversible?",
           isRequired: true,
           colCount: 0,
@@ -54,14 +56,19 @@ const surveyJSON = {
 
 @Component({
   components: {
-    HelloWorld
+    HelloWorld,
+    Score
   }
 })
 export default class Home extends Vue {
   readonly Survey: Model = new Model(surveyJSON);
   created() {
     this.Survey.onComplete.add(result => {
+      this.$store.commit("updateResult", result);
       console.log(JSON.stringify(result.data));
+    });
+    this.Survey.onValueChanged.add(result => {
+      this.$store.commit("updateResult", result);
     });
   }
 }
